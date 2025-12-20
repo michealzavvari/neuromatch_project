@@ -11,6 +11,17 @@ from multiagent.environment import MultiAgentEnv
 
 from MADDPG import MADDPG
 
+
+def get_running_reward(reward_array: np.ndarray, window=100):
+    """Calculate the running reward, i.e. average of last `window` elements from rewards."""
+    running_reward = np.zeros_like(reward_array)
+    for i in range(window - 1):
+        running_reward[i] = np.mean(reward_array[:i + 1])
+    for i in range(window - 1, len(reward_array)):
+        running_reward[i] = np.mean(reward_array[i - window + 1:i + 1])
+    return running_reward
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--env', type=str, default = 'simple_tag_no_adv_sharing', help='name of the environment',
@@ -20,8 +31,8 @@ if __name__ == '__main__':
     parser.add_argument('--episode-length', type=int, default=25, help='steps per episode')
     parser.add_argument('--episode-num', type=int, default=30000, help='total number of episode')
     parser.add_argument('--gamma', type=float, default=0.95, help='discount factor')
-    parser.add_argument('--buffer-capacity', default=int(1e6))
-    parser.add_argument('--batch-size', default=1024)
+    parser.add_argument('--buffer-capacity', type=int, default=int(1e6))
+    parser.add_argument('--batch-size', type=int, default=1024)
     parser.add_argument('--actor-lr', type=float, default=1e-2, help='learning rate of actor')
     parser.add_argument('--critic-lr', type=float, default=1e-2, help='learning rate of critic')
     parser.add_argument('--steps-before-learn', type=int, default=5e4,
@@ -36,18 +47,21 @@ if __name__ == '__main__':
 
     # create folder to save result
     env_dir = os.path.join('results', args.env)
-    if not os.path.exists(env_dir):
-        os.makedirs(env_dir)
-    total_files = len([file for file in os.listdir(env_dir)])
+    os.makedirs(env_dir, exist_ok=True)
+    total_files = len([f for f in os.listdir(env_dir) if os.path.isdir(os.path.join(env_dir, f))])
     res_dir = os.path.join(env_dir, f'{total_files + 1}')
-    os.makedirs(res_dir)
+    os.makedirs(res_dir, exist_ok=True)
     model_dir = os.path.join(res_dir, 'model')
-    os.makedirs(model_dir)
+    os.makedirs(model_dir, exist_ok=True)
 
     # create env
-    scenario = scenarios.load(f'{args.env}.py').Scenario()
-    world = scenario.make_world()
-    env = MultiAgentEnv(world, scenario.reset_world, scenario.reward, scenario.observation)
+    try:
+        scenario = scenarios.load(f'{args.env}.py').Scenario()
+        world = scenario.make_world()
+        env = MultiAgentEnv(world, scenario.reset_world, scenario.reward, scenario.observation)
+    except Exception as e:
+        print(f"Error loading environment '{args.env}': {e}")
+        raise
 
     # get dimension info about observation and action
     obs_dim_list = []
@@ -96,17 +110,6 @@ if __name__ == '__main__':
     torch.save([agent.actor.state_dict() for agent in maddpg.agents], os.path.join(res_dir, 'model.pt'))
     # save training reward
     np.save(os.path.join(res_dir, 'rewards.npy'), total_reward)
-
-
-    def get_running_reward(reward_array: np.ndarray, window=100):
-        """calculate the running reward, i.e. average of last `window` elements from rewards"""
-        running_reward = np.zeros_like(reward_array)
-        for i in range(window - 1):
-            running_reward[i] = np.mean(reward_array[:i + 1])
-        for i in range(window - 1, len(reward_array)):
-            running_reward[i] = np.mean(reward_array[i - window + 1:i + 1])
-        return running_reward
-
 
     # plot result
     fig, ax = plt.subplots()
