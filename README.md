@@ -101,19 +101,32 @@ python main.py --env simple_tag --episode-num 100 --episode-length 25
 
 This will:
 - Train agents for 100 episodes
-- Save results to `results/simple_tag/1/`
+- Save results to `results/simple_tag/{N}/` where `{N}` is the next available folder number (1, 2, 3, etc.)
+  - If this is your first run, results will be in `results/simple_tag/1/`
+  - If folders 1-7 already exist, results will be in `results/simple_tag/8/`
 - Generate training plots and save the model
 
 ### 2. Evaluate a Trained Model
 
-After training, evaluate the model:
+After training, evaluate the model. First, check which folder number was created:
 
 ```bash
-python evaluate.py --env simple_tag --folder 1 --episode-num 10 --episode-length 25
+ls results/simple_tag/
+```
+
+Then evaluate (replace `{N}` with the actual folder number):
+
+```bash
+python evaluate.py --env simple_tag --folder {N} --episode-num 10 --episode-length 25
+```
+
+For example, if results are in folder `7`:
+```bash
+python evaluate.py --env simple_tag --folder 7 --episode-num 10 --episode-length 25
 ```
 
 This will:
-- Load the trained model from `results/simple_tag/1/`
+- Load the trained model from `results/simple_tag/{N}/`
 - Run 10 evaluation episodes with rendering
 - Generate evaluation plots
 
@@ -191,6 +204,8 @@ results/{env_name}/{run_number}/
 ├── maddpg.log                  # Training log file
 └── training result of maddpg solve {env_name}.png  # Training plot
 ```
+
+**Note:** The `{run_number}` is automatically incremented. Each new training run creates a new numbered folder (1, 2, 3, etc.) in the environment's results directory, so your previous runs are preserved.
 
 ---
 

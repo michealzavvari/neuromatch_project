@@ -1,24 +1,29 @@
 import os
 import warnings
 
-from gym.envs.registration import register
-
-# Multiagent envs
-# ----------------------------------------
-
-register(
-    id='MultiagentSimple-v0',
-    entry_point='multiagent.envs:SimpleEnv',
-    # FIXME(cathywu) currently has to be exactly max_path_length parameters in
-    # rllab run script
-    max_episode_steps=100,
-)
-
-register(
-    id='MultiagentSimpleSpeakerListener-v0',
-    entry_point='multiagent.envs:SimpleSpeakerListenerEnv',
-    max_episode_steps=100,
-)
+try:
+    from gym.envs.registration import register
+    
+    # Multiagent envs
+    # ----------------------------------------
+    
+    register(
+        id='MultiagentSimple-v0',
+        entry_point='multiagent.envs:SimpleEnv',
+        # FIXME(cathywu) currently has to be exactly max_path_length parameters in
+        # rllab run script
+        max_episode_steps=100,
+    )
+    
+    register(
+        id='MultiagentSimpleSpeakerListener-v0',
+        entry_point='multiagent.envs:SimpleSpeakerListenerEnv',
+        max_episode_steps=100,
+    )
+except ImportError:
+    # gym not installed - this is OK if only using scenarios directly
+    # The scenarios module can still be imported and used
+    pass
 
 # warnings.warn("This code base is no longer maintained, and is not expected to be maintained again in the future. \n"
 #               "For the past handful of years, these environments been maintained inside of PettingZoo (see "
