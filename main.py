@@ -35,7 +35,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch-size', type=int, default=1024)
     parser.add_argument('--actor-lr', type=float, default=1e-2, help='learning rate of actor')
     parser.add_argument('--critic-lr', type=float, default=1e-2, help='learning rate of critic')
-    parser.add_argument('--steps-before-learn', type=int, default=5e4,
+    parser.add_argument('--steps-before-learn', type=int, default=int(5e4),
                         help='steps to be executed before agents start to learn')
     parser.add_argument('--learn-interval', type=int, default=100,
                         help='maddpg will only learn every this many steps')
