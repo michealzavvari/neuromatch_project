@@ -1,3 +1,130 @@
-/.venv/
-/.idea/
-# /results/
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+.conda/
+
+# PyCharm / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Training Results and Models
+# Uncomment the lines below if you want to ignore training results
+# Note: Results can be large, consider using Git LFS for important models
+results/
+animations/
+*.pt
+*.pth
+*.pkl
+*.h5
+*.ckpt
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Data files
+*.npy
+*.npz
+*.hdf5
+*.h5
+
+# Frames and temporary images
+frames/
+*.png
+*.jpg
+*.jpeg
+# Keep example images in archive/ if needed
+!archive/*.png
+!archive/*.gif
+
+# OS-specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+*.cover
+.cache
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Profiling
+.prof
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.bak
+
+# Distribution / packaging
+*.whl
+*.tar.gz
+
+# Documentation builds
+docs/_build/
+site/
+
+# Local configuration
+local_settings.py
+settings_local.py
