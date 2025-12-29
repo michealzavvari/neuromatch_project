@@ -48,28 +48,8 @@ out/
 
 # Training Results and Models
 
-*.pt
-*.pth
-*.pkl
-*.h5
-*.ckpt
 
-# Logs
-*.log
-logs/
-*.log.*
 
-# Data files
-*.npy
-*.npz
-*.hdf5
-*.h5
-
-# Frames and temporary images
-frames/
-*.png
-*.jpg
-*.jpeg
 
 # Keep important result images and animations
 !archive/*.png
