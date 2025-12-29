@@ -1,4 +1,6 @@
-# neuromatch_project
+> Built as part of the **Neuromatch Academy training program**.  
+> This repository implements **MADDPG** (Multi-Agent Deep Deterministic Policy Gradient) in PyTorch for **OpenAI Multi-Agent Particle Environments (MPE)**, supporting training and evaluation across cooperative and competitive scenarios, with saved checkpoints/results and optional GIF export (recommended via Linux/Colab).
+
 
 ## MADDPG-MPE-PyTorch
 
