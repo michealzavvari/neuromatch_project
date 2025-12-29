@@ -250,6 +250,22 @@ results/{env_name}/{folder}/
 ```
 
 ### Advanced Evaluation (with GIF generation)
+---
+
+#### Exporting GIF Rollouts (Linux / Colab) — macOS note
+
+### TL;DR
+If your goal is a **GIF** (not realtime visualization), the most reliable workflow is to export frames on **Linux (Google Colab or a Linux VM)** and generate a GIF there.
+
+### Why?
+The renderer in this repo uses legacy OpenGL calls (`glPushMatrix`, `glBegin`, etc.).  
+On **macOS**, the OpenGL context is often **Core Profile**, where these calls are invalid, which can cause rendering to crash.  
+So for GIF export, prefer Linux.
+To prevent rendering in local, the line "env.render()" has been commented in the evaluate.py.
+### Guide
+See: `docs/GIF_EXPORT_COLAB.md`
+
+---
 
 For generating animated GIFs of agent behavior, use the `z_experiments.py` module:
 

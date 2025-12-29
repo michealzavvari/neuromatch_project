@@ -51,7 +51,8 @@ if __name__ == '__main__':
             actions = maddpg.select_action(obs)
             next_obs, rewards, dones, infos = env.step(actions)
             episode_reward[step] = rewards
-            env.render()
+            # To prevent rendering in local, we comment out the env.render() line.
+            # env.render()
             time.sleep(0.02)
             obs = next_obs
 
