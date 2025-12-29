@@ -47,10 +47,7 @@ out/
 */.ipynb_checkpoints/*
 
 # Training Results and Models
-# Uncomment the lines below if you want to ignore training results
-# Note: Results can be large, consider using Git LFS for important models
-results/
-animations/
+
 *.pt
 *.pth
 *.pkl
@@ -73,9 +70,12 @@ frames/
 *.png
 *.jpg
 *.jpeg
-# Keep example images in archive/ if needed
+
+# Keep important result images and animations
 !archive/*.png
 !archive/*.gif
+!animations/*.gif
+!animations/*.png
 
 # OS-specific
 .DS_Store
