@@ -20,9 +20,41 @@ except ImportError as e:
     reraise(suffix="HINT: you can install pyglet directly via 'pip install pyglet'. But if you really just want to install all Gym dependencies and not have to think about it, 'pip install -e .[all]' or 'pip install gym[all]' will do it.")
 
 try:
+    import pyglet.gl as gl_module
     from pyglet.gl import *
 except ImportError as e:
     reraise(prefix="Error occured while running `from pyglet.gl import *`",suffix="HINT: make sure you have OpenGL install. On Ubuntu, you can run 'apt-get install python-opengl'. If you're running on a server, you may need a virtual frame buffer; something like this should work: 'xvfb-run -s \"-screen 0 1400x900x24\" python <your_script.py>'")
+
+# Check if immediate mode OpenGL functions are available
+# These are deprecated/removed in OpenGL 3.0+ Core Profile (common on macOS)
+# If they're not available, create no-op fallback functions
+HAS_IMMEDIATE_MODE = True
+try:
+    # Test if functions exist by trying to access them
+    _test = glPushMatrix
+    _test = glBegin
+    _test = glEnd
+except NameError:
+    HAS_IMMEDIATE_MODE = False
+    # Try to get functions from the gl_module
+    glPushMatrix = getattr(gl_module, 'glPushMatrix', lambda: None)
+    glPopMatrix = getattr(gl_module, 'glPopMatrix', lambda: None)
+    glBegin = getattr(gl_module, 'glBegin', lambda mode: None)
+    glEnd = getattr(gl_module, 'glEnd', lambda: None)
+    glVertex3f = getattr(gl_module, 'glVertex3f', lambda x, y, z: None)
+    glVertex2f = getattr(gl_module, 'glVertex2f', lambda x, y: None)
+    glTranslatef = getattr(gl_module, 'glTranslatef', lambda x, y, z: None)
+    glRotatef = getattr(gl_module, 'glRotatef', lambda angle, x, y, z: None)
+    glScalef = getattr(gl_module, 'glScalef', lambda x, y, z: None)
+    # Also check for missing constants
+    if not hasattr(gl_module, 'GL_POINTS'):
+        GL_POINTS = 0x0000
+        GL_LINES = 0x0001
+        GL_LINE_LOOP = 0x0002
+        GL_LINE_STRIP = 0x0003
+        GL_TRIANGLES = 0x0004
+        GL_QUADS = 0x0007
+        GL_POLYGON = 0x0009
 
 import math
 import numpy as np
@@ -49,7 +81,22 @@ class Viewer(object):
         self.width = width
         self.height = height
 
-        self.window = pyglet.window.Window(width=width, height=height, display=display)
+        # On macOS, try to use compatibility profile to support deprecated OpenGL functions
+        # This allows glPushMatrix, glBegin, glEnd, etc. to work
+        try:
+            # Try to create a compatibility context (not forward-compatible)
+            config = pyglet.gl.Config(forward_compatible=False)
+            self.window = pyglet.window.Window(width=width, height=height, display=display, config=config)
+            # After window creation, check if immediate mode functions are available
+            try:
+                glPushMatrix()
+                glPopMatrix()
+            except (NameError, AttributeError):
+                # Functions still not available, will need to use fallbacks
+                pass
+        except Exception:
+            # Fallback to default window if config fails
+            self.window = pyglet.window.Window(width=width, height=height, display=display)
         self.window.on_close = self.window_closed_by_user
         self.geoms = []
         self.onetime_geoms = []
@@ -60,7 +107,13 @@ class Viewer(object):
         glEnable(GL_LINE_SMOOTH)
         # glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-        glLineWidth(2.0)
+        # glLineWidth is deprecated/unsupported on macOS - wrap in try-except
+        try:
+            glLineWidth(2.0)
+        except Exception:
+            # On macOS/OpenGL 3.0+, glLineWidth may not be supported
+            # Line width will default to 1.0, which is acceptable
+            pass
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
     def close(self):
@@ -179,6 +232,7 @@ class Transform(Attr):
         self.set_rotation(rotation)
         self.set_scale(*scale)
     def enable(self):
+        # These functions may not be available on macOS with OpenGL Core Profile
         glPushMatrix()
         glTranslatef(self.translation[0], self.translation[1], 0) # translate to GL loc ppint
         glRotatef(RAD2DEG * self.rotation, 0, 0, 1.0)
@@ -211,7 +265,13 @@ class LineWidth(Attr):
     def __init__(self, stroke):
         self.stroke = stroke
     def enable(self):
-        glLineWidth(self.stroke)
+        # glLineWidth is deprecated/unsupported on macOS - wrap in try-except
+        try:
+            glLineWidth(self.stroke)
+        except Exception:
+            # On macOS/OpenGL 3.0+, glLineWidth may not be supported
+            # Line width will default to 1.0, which is acceptable
+            pass
 
 class Point(Geom):
     def __init__(self):

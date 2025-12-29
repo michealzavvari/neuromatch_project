@@ -240,8 +240,8 @@ if __name__ == "__main__":
                   "good_sharing_soft_bounds"]
     jasvin_folders = ["bad_sharing", "bad_sharing_soft_bounds"] # ashutosh
     mrugsen_folders = ["good_and_bad_sharing", "good_and_bad_sharing_soft_bounds"]
-    mohammad_folders = ["all_share_together", "all_share_together_soft_bounds"] # dan
+    micheal_folders = ["all_share_together", "all_share_together_soft_bounds"] # dan
     shape_folders = ["shape_reward", "no_colab_shape_reward"] # dan macbook
 
     evaluate_new_models(episode_length=100, episode_num=3, 
-                        folder_names=[mohammad_folders[1]])
+                        folder_names=[micheal_folders[1]])
