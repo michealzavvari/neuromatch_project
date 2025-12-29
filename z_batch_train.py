@@ -159,7 +159,7 @@ def run_individually(my_name = "Dan"):
         world_args = get_world_args(default_world_args, my_world_args)
         run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
 
-    if my_name == "Mohammad":
+    if my_name == "Micheal":
         my_world_args = all_share_together
         folder_name = 'all_share_together'
         world_args = get_world_args(default_world_args, my_world_args)
